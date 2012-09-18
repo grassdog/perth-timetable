@@ -12,10 +12,10 @@ class Timetable
   def self.get_time_table_for_date stop_number, date
     connection = ActiveRecord::Base.connection()
     result = connection.execute("SELECT
-                                  stop.stop_id,
-                                  stop.name,
-                                  r.short_name,
-                                  r.long_name,
+                                  stop.stop_id as stop_number,
+                                  stop.name as stop_name,
+                                  r.short_name as route_number,
+                                  r.long_name as route_name,
                                   t.headsign,
                                   stopt.departure_time,
                                   CURRENT_DATE + stopt.departure_time::INTERVAL as departure

@@ -1,0 +1,1 @@
+PGPASSWORD=password pg_dump -Fc -U postgres timetable > timetable_data.dump
