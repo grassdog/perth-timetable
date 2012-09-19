@@ -1,19 +1,19 @@
 class Timetable
   def self.get_time_table_for_week stop_number, date
-    timetable = {}
     routes = {}
     stop = nil
 
     (0..6).each do |delta|
       times = get_time_table_for_date(stop_number, date + delta)
       times.each do |single_stop|
-        stop = timetable[single_stop["stop_number"]] ||= { "stop_name" => single_stop["stop_name"] }
+        stop ||= { "stop_name" => single_stop["stop_name"], "stop_number" => single_stop["stop_number"] }
         route = routes[single_stop["route_number"]] ||= { "route_number" => single_stop["route_number"], "route_name" => single_stop["route_name"], "headsign" => single_stop["headsign"], "departure_times" => [] }
         route["departure_times"] << single_stop["departure"]
       end
     end
     stop["routes"] = routes.map { |number, route_data| route_data }
 
+    timetable = [stop]
     timetable
   end
 
@@ -26,7 +26,7 @@ class Timetable
                                   r.short_name as route_number,
                                   r.long_name as route_name,
                                   t.headsign,
-                                  CURRENT_DATE + stopt.departure_time::INTERVAL as departure
+                                  '#{date.to_formatted_s(:db)}'::DATE + stopt.departure_time::INTERVAL as departure
                                   FROM services s
                                   JOIN trips t ON t.service_id = s.service_id
                                   JOIN routes r ON r.route_id = t.route_id
