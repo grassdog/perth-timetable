@@ -13,7 +13,7 @@ class Timetable
     end
     stop["routes"] = routes.map { |number, route_data| route_data }
 
-    timetable = [stop]
+    timetable = { "timetable" => [stop] }
     timetable
   end
 
