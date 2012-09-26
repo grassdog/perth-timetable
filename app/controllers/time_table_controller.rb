@@ -6,9 +6,7 @@ class TimeTableController < ApplicationController
   end
 
   def stops
-    stops = {:stops => Stop.all.map { |s| { :stop_number => s.stop_id, :stop_name => s.name, :lat => s.lat, :long => s.lon, :parent_station => s.parent_station } } }
-
-    render :json => stops
+    render :json => Stop.get_stops_for_coordinates(params[:start_lat], params[:start_long], params[:end_lat], params[:end_long])
   end
 
   def routes

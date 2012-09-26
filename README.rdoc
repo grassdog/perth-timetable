@@ -14,9 +14,11 @@ Retrieve departure tiems of all services at a specific stop.
 
 = Stops
 
-Get a list of all stops
+Get a list of all stops. This list only includes top level stops, so no stop with a parent stop will be included.
 
-  /time_table/stops 
+  /stops?start_lat=#&start_long=#&end_lat=#&end_long=#    (/stops?start_lat=-31.929219&start_long=115.841290&end_lat=-31.963595&end_long=115.881373)
+
+* start coordinates are for top left corner, end coordinates for bottom right
 
 = Routes
 
