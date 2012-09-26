@@ -1,8 +1,27 @@
-== Perth Timetable
+= Perth Timetable
 
 Service to supply times for departing buses and trains for a specific stop.
 Data is taken from the transperth google feed. See doc/get_rawdata.sh to retrieve your own copy of the data.
 
-Usage:
+= Timetable
 
-/time_table/stop_number/date    (/time_table/10066/2012-09-17)
+Retrieve departure tiems of all services at a specific stop.
+
+  /time_table/stop_number/date    (/time_table/10066/2012-09-17)
+
+* stop_number has to be a stop with no child stations
+* date ISO formatted date yyyy-mm-dd
+
+= Stops
+
+Get a list of all stops
+
+  /time_table/stops 
+
+= Routes
+
+Retrieve all routes that pass through a stop.
+
+  /routes/stop_number    (/routes/59)
+
+* stop_number can be a child or parent stop. If the stop has child stops all routes passing through any of it's children are listed as well.
