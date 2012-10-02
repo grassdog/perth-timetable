@@ -1,24 +1,35 @@
 class Timetable
-  def self.get_time_table_for_week stop_number, date
-    routes = {}
-    stop = nil
+  def self.get_time_table_for_week stop_number, date, routes
+    begin
+      stop = Stop.find_by_stop_id(stop_number)
+      return { "timetable" => [] } if stop.nil?
 
-    (0..6).each do |delta|
-      times = get_time_table_for_date(stop_number, date + delta)
-      times.each do |single_stop|
-        stop ||= { "stop_name" => single_stop["stop_name"], "stop_number" => single_stop["stop_number"] }
-        route = routes[single_stop["route_number"]] ||= { "route_number" => single_stop["route_number"], "route_name" => single_stop["route_name"], "headsign" => single_stop["headsign"], "departure_times" => [] }
-        route["departure_times"] << single_stop["departure"]
+      stop_numbers = stop.child_stops.map { |s| s.stop_id }
+      stop_numbers << stop.stop_id
+
+      stops = {}
+      (0..6).each do |delta|
+        times = get_time_table_for_date(stop_numbers, date + delta, routes)
+        times.each do |single_stop|
+          stop = stops[single_stop["stop_number"]] ||= { "stop_name" => single_stop["stop_name"], "stop_number" => single_stop["stop_number"], "routes" => {} }
+          route = stop["routes"][single_stop["route_number"] + single_stop["headsign"]] ||= { "route_number" => single_stop["route_number"], "route_name" => single_stop["route_name"], "headsign" => single_stop["headsign"], "departure_times" => [] }
+          route["departure_times"] << single_stop["departure"]
+        end
       end
-    end
-    stop["routes"] = routes.map { |number, route_data| route_data }
 
-    timetable = { "timetable" => [stop] }
-    timetable
+      stops.each do |key, s|
+        s["routes"] = s["routes"].map { |key, r| r }
+      end
+
+      timetable = { "timetable" => stops.map { |number, route_data| route_data } }
+      return timetable
+    rescue
+      return { "timetable" => [] }
+    end
   end
 
 
-  def self.get_time_table_for_date stop_number, date
+  def self.get_time_table_for_date stop_numbers, date, routes = nil
     connection = ActiveRecord::Base.connection()
     result = connection.execute("SELECT
                                   stop.stop_id as stop_number,
@@ -49,9 +60,20 @@ class Timetable
                                                     WHERE d.date = '#{date.to_formatted_s(:db)}'
                                                       AND exception_type = 2
                                                       AND d.service_id = s.service_id)
-                                    AND stop.stop_id = #{stop_number}
-                                  ORDER BY departure_time")
+                                    AND stop.stop_id IN (#{stop_numbers.join(", ")})
+                                    #{build_routes_clause(routes)}
+                                  ORDER BY r.short_name, departure_time")
 
     result.to_a
+  end
+
+  def self.build_routes_clause routes
+    return "" if routes.nil? || routes.empty?
+
+    conditions = routes.map do |key, headsign|
+      "(r.short_name = '#{key}' AND t.headsign = '#{headsign}')"
+    end
+
+    "AND (#{conditions.join(" OR ")})"
   end
 end

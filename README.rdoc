@@ -9,8 +9,14 @@ Retrieve departure tiems of all services at a specific stop.
 
   /time_table/stop_number/date    (/time_table/10066/2012-09-17)
 
-* stop_number has to be a stop with no child stations
+* stop_number can be a stop with child stops or a child stop itself
 * date ISO formatted date yyyy-mm-dd
+
+There is the option to add a set of routes to narrow down the selection.
+
+  (?routes[210]=To%20Esplanade%20Busport&routes[211]=To%20Esplanade%20Busport)
+
+The format being: routes[route_number]=headsign
 
 = Stops
 

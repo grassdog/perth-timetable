@@ -1,6 +1,7 @@
 class TimeTableController < ApplicationController
   def show
-    timetable = Timetable.get_time_table_for_week(params[:stop_number], Date.parse(params[:date]))
+    p params[:routes]
+    timetable = Timetable.get_time_table_for_week(params[:stop_number], Date.parse(params[:date]), params[:routes])
 
     render :json => timetable
   end
