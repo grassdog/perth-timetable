@@ -14,9 +14,9 @@ Retrieve departure tiems of all services at a specific stop.
 
 There is the option to add a set of routes to narrow down the selection.
 
-  (?routes[210]=To%20Esplanade%20Busport&routes[211]=To%20Esplanade%20Busport)
+  (?routes[][210]=To%20Esplanade%20Busport&routes[][211]=To%20Esplanade%20Busport)
 
-The format being: routes[route_number]=headsign
+The format being: routes[][route_number]=headsign
 
 = Stops
 

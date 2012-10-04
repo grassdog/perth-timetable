@@ -70,7 +70,9 @@ class Timetable
   def self.build_routes_clause routes
     return "" if routes.nil? || routes.empty?
 
-    conditions = routes.map do |key, headsign|
+    conditions = routes.map do |mapping|
+      key = mapping.first[0]
+      headsign = mapping.first[1]
       "(r.short_name = '#{key}' AND t.headsign = '#{headsign}')"
     end
 
